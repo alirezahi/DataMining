@@ -14,8 +14,8 @@ def stop_condition(data, columns):
     return False
 
 
-def find_best_split(data, columns)
-    
+def find_best_split(data, columns):
+    return ''
 
 
 def tree_growth(data, columns):
