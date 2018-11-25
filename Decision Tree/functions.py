@@ -3,7 +3,10 @@ import math
 def entropy(probability_list):
     sum_result = 0
     for probability_item in probability_list:
-        sum_result += (-1)*probability_item*math.log2(probability_item)
+        if probability_item == 0:
+            sum_result += 0
+        else:
+            sum_result += (-1)*probability_item*math.log2(probability_item)
     return sum_result
 
 
