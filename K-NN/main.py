@@ -1,16 +1,27 @@
-def euclidean_distance(x1, x2,**kwargs):
-    return sum([sub_value(x1[i], x2[i], **kwargs, counter=i)**2 for i in range(len(x1))])**(1/2)
+import csv
+from knn import *
+content_col = [[] for r in range(20)]
+content_row = []
+element_nums = 0
+with open('US Presidential Data.csv') as csv_file:
+    csv_reader = csv.reader(csv_file, delimiter=',')
+    line_count = 0
+    ok = False
+    for row in csv_reader:
+        if not ok:
+            ok = True
+            continue
+        content_row.append(row)
+        element_nums += 1
+        for r in range(len(row)):
+            content_col[r].append(row[r])
 
 
-def sub_value(v1, v2, **kwargs):
-    if str(v1).isdigit() and str(v2).isdigit():
-        if 'min_max' in kwargs:
-            return normalize(v1, kwargs['min_max'][kwargs['counter']]['min'], kwargs['min_max'][kwargs['counter']]['max']) - normalize(v2, kwargs['min_max'][kwargs['counter']]['min'], kwargs['min_max'][kwargs['counter']]['max'])
-        return v1-v2
-    return int(v1 is v2)
+min_max_arr = []
+for element in content_col:
+    if element:
+        min_max_arr.append({'min': min(element), 'max': max(element)})
 
-
-def normalize(value, min_value, max_value):
-    return (value - min_value)/(max_value - min_value)
-
-print(euclidean_distance([1,2,3],[2,3,4],min_max=[{'min':1, 'max':2},{'min':2, 'max':3},{'min':3, 'max':4}]))
+euc_list = [euclidean_distance(content_row[4],content_row[i+5],min_max=min_max_arr) for i in range(element_nums-5)]
+target = min(euc_list)
+print(euc_list.index(target))
