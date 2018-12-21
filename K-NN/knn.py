@@ -2,6 +2,7 @@ import csv
 import random
 import operator
 import itertools
+import matplotlib.pyplot as plt
 
 def euclidean_distance(x1, x2,**kwargs):
     return sum([sub_value(x1[i+1], x2[i+1], **kwargs, counter=i)**2 for i in range(len(x1)-1)])**(1/2)
@@ -91,15 +92,19 @@ def knn(csv_file_name, k=1):
             train_row.append(item)
 
     error_rate = 0
-    for test_item in test_row: 
-        euc_list = [[train_row[i],euclidean_distance(test_item,train_row[i],min_max=min_max_arr)] for i in range(len(train_row))]
-        result = best_neighbours(euc_list,30)
-        # print(test_item," => ", "WIN" if result == "1" else "Lose")
-        # if(str(test_item[0]) != str(result)):
-        #         print(result,test_item)
-        error_rate += int(str(test_item[0]) != str(result))
+    counter = 0
+    k_list= [[],[]]
+    for k in range(1,50):
+        k_list[0].append(k)
+        for test_item in test_row: 
+            euc_list = [[train_row[i],euclidean_distance(test_item,train_row[i],min_max=min_max_arr)] for i in range(len(train_row))]
+            result = best_neighbours(euc_list,k)
+            counter += 1
+            error_rate += int(str(test_item[0]) != str(result))
+        k_list[1].append(error_rate)
 
-    print(error_rate)
+    plt.plot(k_list[0], k_list[1], 'ro')
+    plt.show()
 knn('US Presidential Data.csv')
 
 # print(euclidean_distance([1,2,3],[2,3,4],min_max=[]))

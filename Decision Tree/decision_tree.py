@@ -1,9 +1,12 @@
+import matplotlib.pyplot as plt
 from functions import *
 import pandas as pd
 import random
 import json
 import copy
 
+
+error_rate = [[],[]]
 
 def stop_condition(data, columns, **kwargs):
     return len(set(data[kwargs['class_column']])) == 1 or len(columns) == 0
@@ -59,26 +62,49 @@ def tree_growth(data, columns, **kwargs):
             wow[ideal_col]['default'] = value
     return wow
 
-def make_decision_tree(data_name, class_column, pruning = True):
+def make_decision_tree(data_name, class_column, pruning = False, **kwargs):
+    global error_rate
     df = pd.read_csv(data_name)
+    dt = pd.read_csv(kwargs['test_file'])
     columns = df.columns.tolist()
     columns.remove(class_column)
     tree = tree_growth(df,columns, class_column=class_column)
     print(json.dumps(tree))
+    error_counter = 0
+    counter = 0
+    for element in df.iterrows():
+        e = element[1].to_dict()
+        if not test_item(tree, e, class_column=class_column):
+            error_counter += 1
+        counter += 1
+    print('Number of train errors: ', error_counter)
+    print('Error of train data:', error_counter/counter)
+    error_counter = 0
+    counter = 0
+    for element in dt.iterrows():
+        e = element[1].to_dict()
+        if not test_item(tree, e, class_column=class_column):
+            error_counter += 1
+        counter += 1
+    print('Number of test errors: ', error_counter)
+    print('Error of test data:', error_counter/counter)
     if pruning:
         data = pd.read_csv('noisy_valid.csv')
         error_counter = 0
         counter = 0
         
-        pruned_tree = post_order_traverse(tree, data, main_data=df, class_column=class_column, main_tree=tree, route=[]))
+        pruned_tree = post_order_traverse(tree, data, main_data=df, class_column=class_column, main_tree=tree, route=[])
 
         for element in data.iterrows():
             e = element[1].to_dict()
-            if not test_item(t, e,  main_data=df, class_column=class_column, main_tree=pruned_tree, route=[]):
+            if not test_item(pruned_tree, e,  main_data=df, class_column=class_column, main_tree=pruned_tree, route=[]):
                 error_counter += 1
             counter += 1
         print('error_counter', error_counter)
         print('counter', error_counter)
+    print(error_rate)
+    plt.plot(error_rate[0], error_rate[1], 'ro')
+    plt.show()
 
 def test_item(tree, item, **kwargs):
     new_tree = tree.copy()
@@ -95,6 +121,7 @@ def test_item(tree, item, **kwargs):
 
 
 def post_order_traverse(tmp_tree, data, **kwargs):
+    global error_rate
 
     if type(tmp_tree) != dict:
         return tmp_tree
@@ -128,8 +155,10 @@ def post_order_traverse(tmp_tree, data, **kwargs):
         if not test_item(new_tree, e, **kwargs):
             error_counter_sec += 1
         counter_sec += 1
-    print('error_counter',error_counter)
-    print('error_counter_sec',error_counter_sec)
+    error_rate[0].append(len(error_rate[0]))
+    error_rate[1].append(error_counter_sec)
+    # print('error_counter',error_counter)
+    # print('error_counter_sec',error_counter_sec)
     if error_counter_sec < error_counter:
         return default_class
     return {key:{'default':value['default'] ,'values':tmp_node}}
@@ -157,4 +186,4 @@ r = {
     'y': '3'
 }
 
-make_decision_tree('noisy_train.csv', 'poisonous')
+make_decision_tree('noisy_train.csv', 'poisonous', test_file='noisy_test.csv', pruning=True)
