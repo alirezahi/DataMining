@@ -34,19 +34,22 @@ def count_repeat(data_set, target):
 def apriori(data_set):
     k = 1
     L = get_items(data_set)
-    # L = [ [i[1]] for i in data_set]
+    result = None
     while len(L) != 0:
         k += 1
-        L = combination(L, k-2)
+        new_list = combination(L, k-2)
         tmp_l = []
-        for comb in L:
+        for comb in new_list:
             count = count_repeat(data_set, comb)
             if count >= SUPPORT_THRESHOLD:
                 tmp_l.append(comb)
+        if len(tmp_l) == 0:
+            result = L.copy()
         L = tmp_l
+    return result
         
 
-apriori([
+r = apriori([
     [1,2,5],
     [2,4],
     [2,3],
@@ -57,3 +60,6 @@ apriori([
     [1,2,3,5],
     [1,2,3]
 ])
+
+
+print(r)
