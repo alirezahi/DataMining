@@ -13,8 +13,21 @@ def combination(arr_list, common_number):
             result.append(item)
     return result
 
+def get_items(data_set):
+    items = []
+    for obj in data_set:
+        for el in obj:
+            if el not in items:
+                items.append(el)
+    return items
 
-# t = combination([[2, 3], [2, 4], [3, 4]])
+
+def count_repeat(data_set, target):
+    counter = 0
+    for obj in data_set:
+        if set(target) <= set(obj):
+            counter += 1
+    return counter
 
 def apriori(data_set):
     k = 1
