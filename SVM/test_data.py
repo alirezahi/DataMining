@@ -42,6 +42,10 @@ a = -w[0] / w[1]
 xx = np.linspace(-5, 5)
 yy = a * xx - (C_svm[c_min_id].intercept_[0]) / w[1]
 
+predict_validation = classifier.predict(x_test)
+test_accuracy = accuracy_score(y_test, predict_validation)
+print('test accuracy => ', test_accuracy)
+
 plt.scatter(x_test.iloc[:,0],x_test.iloc[:,1], c=y_test)
 plt.plot(xx, yy, 'k-')
 plt.show()
