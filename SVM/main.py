@@ -10,6 +10,8 @@ data = pd.read_csv('svmdata.csv')
 labels = data.iloc[:,2]
 features = data.iloc[:,0:2]
 
-# plt.figure()
-# plt.scatter(features)
+plt.figure()
+plt.scatter(features.iloc[:,0],features.iloc[:,1], c=labels)
+
+plt.show()
 
