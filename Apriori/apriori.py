@@ -1,6 +1,6 @@
 from itertools import combinations
 
-SUPPORT_THRESHOLD = 2
+SUPPORT_THRESHOLD = 7
 
 def common_elements(list1, list2):
     return list(set(list1) & set(list2))
@@ -14,6 +14,24 @@ def combination(arr_list, common_number):
         if len(common_elements(arr_list[el[0]],arr_list[el[1]])) >= common_number and item not in result:
             result.append(item)
     return result
+
+def replace_n(string):
+    string = string.replace('\r','')
+    string = string.replace('\n','')
+    string = string.replace('\r\n','')
+    return string
+
+def subs(l):
+    if l == []:
+        return [[]]
+    x = subs(l[1:])
+    return x + [[l[0]] + y for y in x]
+
+def subs_non_zero(l):
+    res = []
+    for r in filter(lambda x: x != [] and x != l, subs(l)):
+        res.append(r)
+    return res
 
 def get_items(data_set):
     items = []
@@ -30,6 +48,7 @@ def count_repeat(data_set, target):
         if set(target) <= set(obj):
             counter += 1
     return counter
+
 
 def apriori(data_set):
     k = 1
@@ -49,17 +68,30 @@ def apriori(data_set):
     return result
         
 
-r = apriori([
-    [1,2,5],
-    [2,4],
-    [2,3],
-    [1,2,4],
-    [1,3],
-    [2,3],
-    [1,3],
-    [1,2,3,5],
-    [1,2,3]
-])
+# r = apriori([
+#     [1,2,5],
+#     [2,4],
+#     [2,3],
+#     [1,2,4],
+#     [1,3],
+#     [2,3],
+#     [1,3],
+#     [1,2,3,5],
+#     [1,2,3],
+# ])
 
+input_data = []
+with open('chess.dat') as f:
+    input_data = [[el for el in replace_n(line).split(' ')] for line in f]
 
+r = apriori(input_data)
+r = r[0]
 print(r)
+print(subs_non_zero(r))
+r_rept = count_repeat(input_data, r)
+for comb in subs_non_zero(r):
+    # complementary_comb = list(set(r)-set(comb))
+    print(comb, ' => ', list(set(r)-set(comb)))
+    c1 = count_repeat(input_data, comb)
+    print(r_rept/c1)
+    print('we')
