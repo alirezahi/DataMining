@@ -33,4 +33,6 @@ for candidate in C_candidates:
 
 print("C accurace rate: ", C_accuracy)
 min_c = max(C_accuracy)
+plt.scatter(C_accuracy,[i for i in range(8)])
+plt.show()
 print("Max of C rate => ", min_c)

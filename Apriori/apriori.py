@@ -1,6 +1,6 @@
 from itertools import combinations
 
-SUPPORT_THRESHOLD = 7
+SUPPORT_THRESHOLD = 4
 
 def common_elements(list1, list2):
     return list(set(list1) & set(list2))
@@ -53,6 +53,13 @@ def count_repeat(data_set, target):
 def apriori(data_set):
     k = 1
     L = get_items(data_set)
+    NEW_L = L.copy()
+    L = []
+    for comb in NEW_L:
+        count = count_repeat(data_set, comb)
+        if count >= SUPPORT_THRESHOLD:
+            L.append(comb)
+    print(L)
     result = None
     while len(L) != 0:
         k += 1
@@ -62,23 +69,11 @@ def apriori(data_set):
             count = count_repeat(data_set, comb)
             if count >= SUPPORT_THRESHOLD:
                 tmp_l.append(comb)
+        print('', tmp_l)
         if len(tmp_l) == 0:
             result = L.copy()
         L = tmp_l
     return result
-        
-
-# r = apriori([
-#     [1,2,5],
-#     [2,4],
-#     [2,3],
-#     [1,2,4],
-#     [1,3],
-#     [2,3],
-#     [1,3],
-#     [1,2,3,5],
-#     [1,2,3],
-# ])
 
 input_data = []
 with open('chess.dat') as f:
@@ -86,12 +81,15 @@ with open('chess.dat') as f:
 
 r = apriori(input_data)
 r = r[0]
-print(r)
-print(subs_non_zero(r))
+r = ['B','E']
+# print(r)
+# print(subs_non_zero(r))
 r_rept = count_repeat(input_data, r)
-for comb in subs_non_zero(r):
+# for comb in subs_non_zero(r):
     # complementary_comb = list(set(r)-set(comb))
-    print(comb, ' => ', list(set(r)-set(comb)))
-    c1 = count_repeat(input_data, comb)
-    print(r_rept/c1)
-    print('we')
+comb = ['B']
+c1 = count_repeat(input_data, comb)
+    # c1 = count_repeat(input_data, ['B'])
+print(comb, ' => ', list(set(r)-set(comb)))
+print(r_rept/c1)
+# print('we')
